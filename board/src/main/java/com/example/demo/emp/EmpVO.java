@@ -29,4 +29,5 @@ public class EmpVO {
 	String departmentId;
 	String managerId;
 	String phone;
+	String photo;
 }
