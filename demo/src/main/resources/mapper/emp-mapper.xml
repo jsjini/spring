@@ -19,9 +19,9 @@
 	  	    		#{empid}
 	  	    	</foreach>
 	  	    </if>
-	  	    ORDER BY first_name
-	  	     ) a WHERE rownum <![CDATA[  <=  ]]> #{svo.end} ) b WHERE rn >= #{svo.start}
 	  	</where>
+	  	ORDER BY first_name
+	  	     ) a WHERE rownum <![CDATA[  <=  ]]> #{svo.end} ) b WHERE rn >= #{svo.start}
 	</sql>
 	<resultMap type="EmpVO" id="empResultMap">
 		<id property="employeeId" column="EMPLOYEE_ID" />

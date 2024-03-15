@@ -1,23 +1,29 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+  layout:decorate="~{layout/layout}">
 <head>
 <meta charset="UTF-8">
 <title>Insert title here</title>
 </head>
 <body>
+	<div layout:fragment="content">
 	<h2>사원목록</h2>
 	<table>
 		<tr>
 			<th>employee_id</th>
 			<th>first_name</th>
 			<th>last_name</th>
+			<th>hire_date</th>
+			<th>수정</th>
 		</tr>
 		<tr th:each="emp : ${empList}">
 			<td th:text="${emp.employeeId}"></td>
 			<td th:text="${emp.firstName}"></td>
 			<td th:text="${emp.lastName}"></td>
-			<td th:text="${emp.hireDate}"></td>
+			<td th:text="${#dates.format(emp.hireDate,'yyyy-MM-dd')}"></td>
+			<td><a th:href="@{/emp/update}">수정</a></td>
 		</tr>
 	</table>
+	</div>
 </body>
 </html>

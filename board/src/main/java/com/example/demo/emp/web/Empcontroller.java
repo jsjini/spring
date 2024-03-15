@@ -48,9 +48,9 @@ public class Empcontroller {
 	}
 	// 수정처리
 	@PostMapping("/update")
-	public String update(@ModelAttribute("emp") EmpVO vo) {
+	public String update(EmpVO vo) {
 		System.out.println(vo);
-		vo.setEmployeeId(218);
+		vo.setEmployeeId(220);
 		mapper.updateEmp(vo);
 		return "redirect:/emp/list";
 	}	
