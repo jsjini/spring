@@ -68,7 +68,7 @@ public class Empcontroller {
 	}	
 	
 	// 삭제처리
-	@GetMapping("/emp/delete")
+	@PostMapping("/emp/delete")
 	public String delete(int employeeId) {
 		System.out.println(employeeId);
 		mapper.deleteEmp(employeeId);

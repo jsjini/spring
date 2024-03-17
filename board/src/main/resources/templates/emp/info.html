@@ -6,7 +6,7 @@
 </head>
 <body>
 	<h2>사원조회</h2>
-	<form action="/emp/delete" method="get">
+	<form action="/emp/delete" method="post">
 		<input name="employeeId" hidden th:value="${emp.employeeId}">
 		[[${emp.lastName}]]
 		<button>삭제</button>
