@@ -20,8 +20,8 @@
 	  	    	</foreach>
 	  	    </if>
 	  	</where>
-	  	     ) a WHERE rownum <![CDATA[  <=  ]]> #{svo.end} ) b WHERE rn >= #{svo.start}
-	  	    ORDER BY employee_id desc
+	  	     ) a WHERE rownum <![CDATA[  <=  ]]> #{svo.end} ORDER BY employee_id desc ) b WHERE rn >= #{svo.start}
+	  	    
 	</sql>
 	<resultMap type="EmpVO" id="empResultMap">
 		<id property="employeeId" column="EMPLOYEE_ID" />
