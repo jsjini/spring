@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import com.example.demo.common.Paging;
 import com.example.demo.emp.EmpVO;
 import com.example.demo.emp.SearchVO;
 import com.example.demo.emp.mapper.EmpMapper;
@@ -26,6 +27,12 @@ import lombok.RequiredArgsConstructor;
 public class Empcontroller {
 	
 	final EmpMapper mapper; // 의존성주입(DI Dependency Injection)
+	
+	@GetMapping("/info/{empId}") 
+	public String info(@PathVariable int empId, Model model) { 
+		model.addAttribute("emp", mapper.getEmpInfo(empId));
+		return "empInfo";
+	}
 	
 	@RequestMapping("/update/{empId}") 
 	public String update(@PathVariable int empId) { 
@@ -83,8 +90,16 @@ public class Empcontroller {
 	}
 	
 	@RequestMapping("/empList")
-	public String empList(Model model, EmpVO vo, SearchVO svo) {
-		model.addAttribute("companyName", "<i><font color='red'>예담주식회사</font></i>");
+	public String empList(Model model, EmpVO vo, SearchVO svo, Paging pvo) {
+		// 페이징처리
+		pvo.setPageUnit(5); // 1페이지에 데이터 수
+		pvo.setPageSize(3); // 페이지네이션 수
+		svo.setStart(pvo.getFirst());
+		svo.setEnd(pvo.getLast());
+		pvo.setTotalRecord(mapper.getCount(vo, svo));
+		model.addAttribute("paging", pvo);
+		
+		// 목록조회
 		model.addAttribute("empList", mapper.getEmpList(vo, svo));
 		return "empList";
 	}

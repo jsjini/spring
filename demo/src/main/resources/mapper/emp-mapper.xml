@@ -4,13 +4,13 @@
 <mapper namespace="com.example.demo.emp.mapper.EmpMapper">
 	<sql id="condition">
 		<where>
-	  	  	<if test ="vo.departmentId != null">
+	  	  	<if test ="vo.departmentId != null and vo.departmentId != ''">
 	  	  		department_id = #{vo.departmentId}
 	  	  	</if>
-	  	  	<if test ="vo.firstName != null">
-	  	    	AND first_name = #{vo.firstName}
+	  	  	<if test ="vo.firstName != null and vo.firstName != ''">
+	  	    	AND first_name LIKE '%' || #{vo.firstName} || '%'
 	  	    </if>
-	  	    <if test ="vo.managerId != null">
+	  	    <if test ="vo.managerId != null and vo.managerId != ''">
 	  	    	AND manager_id = #{vo.managerId}
 	  	    </if>
 	  	    <if test ="svo.employeeIds != null">
@@ -20,14 +20,19 @@
 	  	    	</foreach>
 	  	    </if>
 	  	</where>
-	  	ORDER BY first_name
-	  	     ) a WHERE rownum <![CDATA[  <=  ]]> #{svo.end} ) b WHERE rn >= #{svo.start}
+	  	
 	</sql>
 	<resultMap type="EmpVO" id="empResultMap">
 		<id property="employeeId" column="EMPLOYEE_ID" />
 		<result property="firstName" column="FIRST_NAME" />
 		<result property="phone" column="PHONE_NUMBER" />
 	</resultMap>
+	
+	<select id="getCount" resultType="long">
+		SELECT count(*)
+		  FROM employees
+		  <include refid="condition"></include>
+	</select>
 	
 	<select id="getEmpList" resultMap="empResultMap">
 	 SELECT * FROM (SELECT rownum as rn, a.* FROM (
@@ -45,7 +50,7 @@
 				DEPARTMENT_ID 
 		   FROM employees e
 			<include refid="condition"></include>
-	  	 
+	  	     ) a WHERE rownum <![CDATA[  <=  ]]> #{svo.end} ORDER BY employee_id DESC) b WHERE rn >= #{svo.start}
 	  	
 	
 	

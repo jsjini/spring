@@ -18,5 +18,5 @@ public interface EmpMapper {
 	int deleteEmp(int employeeId);
 	List<Map<String, Object>> getStat();
 	int updateEmp(EmpVO empVO);
-
+	long getCount();
 }

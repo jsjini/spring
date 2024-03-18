@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.demo.board.mapper.ReplyMapper">
+	<select id="getReplyList" resultType="ReplyVO">
+		 SELECT rno
+				bno
+				reply
+				replyer
+				replydate
+				updatedate
+		   FROM board
+ 	</select>
+ 	
+ 	<insert id="insertReply">
+ 		insert into tbl_reply (rno, bno, reply, replyer)
+ 		values ( seq_reply.nextval, #{bno}, #{reply}, #{replyer})
+ 	</insert>
+ 	
+ 	<select id="getReplyInfo" resultType="ReplyVO">
+ 		select *
+ 		from tbl_reply
+ 		where rno = #{rno}
+ 	</select>
+</mapper>
