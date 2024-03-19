@@ -13,4 +13,6 @@ public interface BoardMapper {
 	int insertBoard(BoardVO BoardVO);
 	int deleteBoard(int boardNo);
 	int updateBoard(BoardVO vo);
+	long getCount(BoardVO vo);
+	int updateCount(BoardVO vo);
 }

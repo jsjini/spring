@@ -11,7 +11,7 @@ public class BoardVO {
 	String content;
 	String writer;
 	Date writerDate;
-	int clickCnt;
+	Integer clickCnt;
 	String image;
 	
 	int start = 1;

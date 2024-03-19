@@ -13,8 +13,6 @@
 	  	    <if test ="writer != null">
 	  	    	AND writer = #{writer}
 	  	    </if>
-	  	    ORDER BY board_no
-	  	     ) a WHERE rownum <![CDATA[  <=  ]]> #{end} ) b WHERE rn >= #{start}
 	  	</where>
 	</sql>
  <select id="getBoardList" resultType="BoardVO">
@@ -29,7 +27,15 @@
 				image
 		   FROM board
 			<include refid="condition"></include>
+			 ORDER BY board_no desc
+	  	     ) a WHERE rownum <![CDATA[  <=  ]]> #{end} ) b WHERE rn >= #{start}
  </select>
+ 
+ 	<select id="getCount" resultType="long">
+		SELECT count(*)
+		  FROM board
+		  <include refid="condition"></include>
+	</select>
  
  	<select id="getBoardInfo" parameterType="int" resultType="BoardVO">
 		SELECT *
@@ -67,7 +73,18 @@
 	
 	<update id="updateBoard" parameterType="BoardVO">
 		UPDATE board
-		SET content = #{content}
+		SET title = #{title},
+			content = #{content}
+		WHERE board_no = #{boardNo}
+	</update>
+	<update id="updateCount" parameterType="BoardVO">
+		<selectKey keyProperty="clickCnt" order="BEFORE" resultType="int">
+			select click_cnt + 1
+			from board
+			where board_no = #{boardNo}
+		</selectKey>
+		UPDATE board
+		SET click_cnt = #{clickCnt}
 		WHERE board_no = #{boardNo}
 	</update>
 	

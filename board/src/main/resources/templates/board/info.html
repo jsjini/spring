@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Insert title here</title>
+</head>
+<body>
+	<h2>보드조회</h2>
+	<table>
+		<thead>
+		<tr>
+			<th>번호</th>
+			<th>작성자</th>
+			<th>제목</th>
+			<th>내용</th>
+			<th>작성일</th>
+			<th>조회수</th>
+			<th>이미지</th>
+			<th></th>
+		</tr>
+		</thead>
+		<tbody>
+			<tr>
+				<td id="boardNumber">[[${info.boardNo}]]</td>
+				<td>[[${info.title}]]</td>
+				<td>[[${info.writer}]]</td>
+				<td>[[${info.content}]]</td>
+				<td>[[${info.writerDate}]]</td>
+				<td>[[${info.clickCnt}]]</td>
+				<td>[[${info.image}]]</td>
+				<td></td>
+			</tr>
+		</tbody>
+	</table>
+		<button id="delbtn">삭제</button>
+	<script>
+	delbtn.addEventListener("click", e=> {
+		delReq();
+	})
+	
+	function delReq() {
+		let param = boardNumber.innerText;
+		console.log(param);
+		fetch("/ajax/delete",{
+			method : "post",
+			headers: {
+			      "Content-Type": "application/json",
+			    },
+			body : JSON.stringify(param)
+		})
+		.then(res => delRes(res))
+	}
+	
+	function delRes(res) {
+		location.href= "/board/list"
+	}
+	</script>
+</body>
+
+</html>
