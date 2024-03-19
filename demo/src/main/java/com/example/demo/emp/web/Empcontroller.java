@@ -1,6 +1,7 @@
 package com.example.demo.emp.web;
 
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -18,7 +19,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import com.example.demo.common.Paging;
 import com.example.demo.emp.EmpVO;
 import com.example.demo.emp.SearchVO;
-import com.example.demo.emp.mapper.EmpMapper;
+import com.example.demo.emp.service.EmpService;
 
 import lombok.RequiredArgsConstructor;
 
@@ -26,12 +27,38 @@ import lombok.RequiredArgsConstructor;
 @Controller	// 컨테이너 빈 등록 + 사용자요청처리할 수 있는 커맨드 핸들러 변환
 public class Empcontroller {
 	
-	final EmpMapper mapper; // 의존성주입(DI Dependency Injection)
+	final EmpService empService; // 의존성주입(DI Dependency Injection)
+	
+	@RequestMapping("/empList")
+	public String empList(Model model, EmpVO vo, SearchVO svo, Paging pvo) {
+		// 페이징처리
+		pvo.setPageUnit(5); // 1페이지에 데이터 수
+		pvo.setPageSize(3); // 페이지네이션 수
+		svo.setStart(pvo.getFirst());
+		svo.setEnd(pvo.getLast());
+		
+		Map<String, Object> map = empService.getEmpList(vo, svo);
+		
+		
+		
+		pvo.setTotalRecord((Long)map.get("count"));
+		model.addAttribute("paging", pvo);
+		
+		// 목록조회
+		model.addAttribute("empList", map.get("data"));
+		return "empList";
+	}
 	
 	@GetMapping("/info/{empId}") 
 	public String info(@PathVariable int empId, Model model) { 
-		model.addAttribute("emp", mapper.getEmpInfo(empId));
+		model.addAttribute("emp", empService.getEmpInfo(empId));
 		return "empInfo";
+	}
+	
+	@GetMapping("/delete") 
+	public String delete(int employeeId, String name) { 
+		empService.deleteEmp(employeeId);
+		return "redirect:empList";
 	}
 	
 	@RequestMapping("/update/{empId}") 
@@ -40,11 +67,6 @@ public class Empcontroller {
 		return "index";
 	}
 	
-	@RequestMapping("/delete2") 
-	public String delete2(int employeeId, String name) { 
-		System.out.println(employeeId + ":" + name);
-		return "index";
-	}
 	
 	@RequestMapping("/empResult") 
 	public String result() { 
@@ -83,24 +105,4 @@ public class Empcontroller {
 		return "index";
 	}
 	
-	@RequestMapping("/ajaxEmp")
-	@ResponseBody
-	public List<EmpVO> ajaxEmp() {
-		return mapper.getEmpList(null, null);
-	}
-	
-	@RequestMapping("/empList")
-	public String empList(Model model, EmpVO vo, SearchVO svo, Paging pvo) {
-		// 페이징처리
-		pvo.setPageUnit(5); // 1페이지에 데이터 수
-		pvo.setPageSize(3); // 페이지네이션 수
-		svo.setStart(pvo.getFirst());
-		svo.setEnd(pvo.getLast());
-		pvo.setTotalRecord(mapper.getCount(vo, svo));
-		model.addAttribute("paging", pvo);
-		
-		// 목록조회
-		model.addAttribute("empList", mapper.getEmpList(vo, svo));
-		return "empList";
-	}
 }

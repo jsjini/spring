@@ -19,6 +19,7 @@ public class ReplyController {
 	// 리스트
 	@GetMapping("/replies/list")
 	
+	
 	// 등록처리
 	@PostMapping("/replies/new")
 	public ReplyVO save(ReplyVO vo) {
