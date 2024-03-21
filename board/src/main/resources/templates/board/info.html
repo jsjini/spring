@@ -6,6 +6,7 @@
 </head>
 <body>
 	<h2>보드조회</h2>
+	<button id="moveList">목록이동</button>
 	<table>
 		<thead>
 		<tr>
@@ -33,10 +34,230 @@
 		</tbody>
 	</table>
 		<button id="delbtn">삭제</button>
+		
+		
+		<h2>댓글목록</h2><button id="addBtn">댓글등록</button>
+		<table>
+			<thead>
+			<tr>
+				<th>번호</th>
+				<th>작성자</th>
+				<th>내용</th>
+				<th>작성일</th>
+				<th>수정일</th>
+				<th></th>
+			</tr>
+			</thead>
+			<tbody id="replyList1">
+	
+			</tbody>
+		</table>
+		<div id="nav"></div>
+		<div id="addReply" style="display: none;">
+			<h2>댓글등록</h2>
+			<form method="post" name="frm">
+				보드번호<input id="bno" name="bno" readonly>
+				<br>작성자<input name="replyer">
+				<br>내용<textarea name="reply" ></textarea>
+				<br><button type="button" id="saveBtn">등록</button>
+			</form>
+		</div>
+		<div id="modReply" style="display: none;">
+			<h2>댓글수정</h2>
+			<form method="post" name="frm1">
+				댓글번호<input id="rno" name="rno" readonly>
+				<br>작성자<input id="modReplyer" name="replyer">
+				<br>내용<textarea id="modReply1" name="reply"></textarea>
+				<br><button type="button" id="modBtn">수정</button>
+			</form>
+		</div>
+
 	<script>
 	delbtn.addEventListener("click", e=> {
 		delReq();
 	})
+	moveList.addEventListener("click", e => {
+		location.href= "/board/list";
+	})
+	
+	addBtn.addEventListener("click", e => {
+		if(addReply.style.display == 'none'){
+			addReply.style.display = 'block';
+			bno.value = boardNumber.innerText;
+			addBtn.innerText = '닫기';
+		} else {
+			addReply.style.display = 'none';
+			addBtn.innerText = '댓글등록';
+		}
+	})
+	modBtn.addEventListener("click", e => {
+		const rno=frm1.rno.value;
+		const replyer=frm1.replyer.value;
+		const reply=frm1.reply.value;
+		let param = {rno, replyer, reply}
+		fetch("/ajax/replyUpdate",{
+			method : "post",
+			headers: {
+					"Content-Type": "application/json",
+				},
+			body : JSON.stringify(param)
+		})
+		.then(res => res.json())
+		.then(res => modRes(res))
+	})
+
+	// 수정 응답
+	function modRes(res) {
+		location.href= "/board/info/" + boardNumber.innerText;
+	}
+
+	saveBtn.addEventListener("click", e=> {
+			saveReq();
+		})
+		// 등록 요청
+		function saveReq() {
+			const bno=frm.bno.value;
+			const reply=frm.reply.value;
+			const replyer=frm.replyer.value;
+			let param = {bno, reply, replyer}
+			fetch("/ajax/reply",{
+				method : "post",
+				headers: {
+				      "Content-Type": "application/json",
+				    },
+				body : JSON.stringify(param)
+			})
+			.then(res => res.json())
+			.then(res => saveRes(res))
+		}
+	
+		// 등록 응답
+		function saveRes(res) {
+			location.href= "/board/info/" + boardNumber.innerText;
+		}
+
+	replyList(1);
+	
+	// 리스트 요청
+	function replyList(p) {
+		let boardNo = boardNumber.innerText;
+		const param = "?page=" + p + "&bno=" + boardNo;
+		fetch("/ajax/replyList" + param)
+		.then(res => res.json())
+		.then(res => listRes(res))
+		
+		// 비동기
+		// axios.get("/ajax/empList" + param)
+		// .then(res => listRes(res.data))
+		
+		// 동기식
+		//const res = await axios.get("/ajax/empList" + param);
+		//listRes(res.data);
+	}
+
+	// 리스트 응답
+	function listRes(res) {
+		replyList1.innerHTML = '';
+		nav.innerHTML = '';
+		console.log(res);
+		console.log(res.data);
+		console.log(res.paging);
+		console.log(res.data.length);
+		if(res.data.length == 0){
+			replyList1.innerHTML = makeNull();
+		} else {
+		// 목록출력
+		for( obj of res.data ) {
+			console.log(obj);
+			replyList1.innerHTML += makeTr(obj);
+		}
+		// 페이징처리
+		nav.innerHTML += makePage(res.paging);
+		}
+	}
+
+	// 페이징생성
+	function makePage(paging) {
+		let tag = `<nav aria-label="...">
+			  <ul class="pagination">`
+		// 이전버튼
+		if(paging.startPage > 1) {
+		  tag += `<li class="page-item">
+		        <a class="page-link" href="javascript:gopage(${paging.startPage-1})">Previous</a></li>`
+		}
+		// 페이지번호
+		for(i = paging.startPage; i<=paging.endPage; i++) {
+			tag += `<li class="page-item">
+		        <a class="page-link" href="javascript:gopage(${i})">${i}</a></li>`
+		}
+		// 다음버튼
+		if(paging.endPage <= paging.lastPage) {
+			tag += `<li class="page-item">
+		        <a class="page-link" href="javascript:gopage(${paging.endPage+1})">Next</a></li>`
+		}
+		
+		tag += ` </ul>
+			</nav>`
+			
+		return tag;
+	}
+
+	function makeNull() {
+		let nullTag = `<h3 style="text-align: center;">댓글 없음</h3>`
+		return nullTag;
+	}
+	
+	// tr생성
+	function makeTr(obj) {
+		let newTag = `<tr>
+			<td>${obj.rno}</td>
+			<td>${obj.replyer}</td>
+			<td>${obj.reply}</td>
+			<td>${obj.replyDate}</td>
+			<td>${obj.updateDate}</td>
+			<td><button type="button" onclick="modPage(${obj.rno})">수정</button>
+				<button type="button" onclick="delPage(${obj.rno})">삭제</button></td>
+		</tr>`
+		console.log(newTag);
+		return newTag;
+	}
+	
+	function delPage(rno1) {
+		if(confirm("정말로 삭제하시겠습니까?")){
+			let param = rno1;
+			fetch("/ajax/replyDelete",{
+				method : "post",
+				headers: {
+					"Content-Type": "application/json",
+					},
+				body : JSON.stringify(param)
+			})
+			.then(res => delRes2(res))
+		}
+	}
+	function delRes2(res) {
+		location.href= "/board/info/" + boardNumber.innerText;
+	}
+
+	function modPage(rno1) {
+		if(modReply.style.display == 'none'){
+			modReply.style.display = 'block';
+			rno.value = rno1;
+			fetch("/ajax/replyInfo/" + rno.value)
+			.then(res => res.json())
+			.then(res => {
+				console.log(res);
+				modReplyer.value = res.replyer;
+				modReply1.value = res.reply;
+			});
+		} else {
+			modReply.style.display = 'none';
+		}
+	}
+
+	function gopage(p) {
+		replyList(p);
+	}
 	
 	function delReq() {
 		let param = boardNumber.innerText;

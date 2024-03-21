@@ -18,7 +18,7 @@ public class ReplyMapperTests {
 			// 게시물의 번호
 			vo.setReply("댓글 테스트");
 			vo.setReplyer("replyer");
-			vo.setBno((long) 10);
+			vo.setBno(10);
 			int result = mapper.insertReply(vo);
 			System.out.println(result);
 			System.out.println(vo);
@@ -26,7 +26,7 @@ public class ReplyMapperTests {
 	
 	@Test
 	public void 댓글조회() {
-		long rno = 1;
+		int rno = 1;
 		ReplyVO vo = mapper.getReplyInfo(rno);
 		System.out.println(vo);
 	}

@@ -2,24 +2,48 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
   "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.example.demo.board.mapper.ReplyMapper">
-	<select id="getReplyList" resultType="ReplyVO">
-		 SELECT rno
-				bno
-				reply
-				replyer
-				replydate
+	<select id="getReplyList" resultType="ReplyVO" parameterType="int">
+		 SELECT * FROM (SELECT rownum as rn, a.* FROM (
+		 
+		 SELECT rno,
+				bno,
+				reply,
+				replyer,
+				replydate,
 				updatedate
-		   FROM board
+		   FROM tbl_reply
+		   WHERE bno = #{bno}
+		   
+		   ORDER BY rno desc
+	  	     ) a WHERE rownum <![CDATA[  <=  ]]> #{end} ) b WHERE rn >= #{start}
  	</select>
  	
- 	<insert id="insertReply">
+ 	 <select id="getCount1" resultType="long">
+		SELECT count(*)
+		  FROM tbl_reply
+	</select>
+ 	
+ 	<insert id="insertReply" parameterType="ReplyVO">
  		insert into tbl_reply (rno, bno, reply, replyer)
  		values ( seq_reply.nextval, #{bno}, #{reply}, #{replyer})
  	</insert>
  	
- 	<select id="getReplyInfo" resultType="ReplyVO">
+ 	<select id="getReplyInfo" parameterType="int" resultType="ReplyVO">
  		select *
  		from tbl_reply
  		where rno = #{rno}
  	</select>
+ 	
+ 	<update id="updateReply" parameterType="ReplyVO">
+		UPDATE tbl_reply
+		SET reply = #{reply},
+			replyer = #{replyer},
+			updatedate = sysdate
+		WHERE rno = #{rno}
+	</update>
+	
+	<delete id="deleteReply" parameterType="int">
+		DELETE FROM tbl_reply
+		WHERE rno = #{rno}
+	</delete>
 </mapper>

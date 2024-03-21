@@ -10,6 +10,8 @@ import com.example.demo.board.ReplyVO;
 public interface ReplyMapper {
 	List<ReplyVO> getReplyList(ReplyVO vo);
 	public int insertReply(ReplyVO vo);
-	public ReplyVO getReplyInfo(long rno);
-	
+	public ReplyVO getReplyInfo(int rno);
+	long getCount1(ReplyVO vo);
+	int updateReply(ReplyVO vo);
+	int deleteReply(int rno);
 }
